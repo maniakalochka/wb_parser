@@ -10,4 +10,14 @@ dependencies = [
     "httpx>=0.28.1",
     "pandas>=3.0.1",
     "openpyxl>=3.1.5",
+    "tqdm>=4.67.3",
+    "orjson>=3.11.7",
+    "tenacity>=9.1.4",
+    "typer>=0.24.1",
+    "h2>=4.3.0",
+    "black>=26.1.0",
+    "isort>=8.0.1",
 ]
+
+[project.scripts]
+app = "app.cli:app"
