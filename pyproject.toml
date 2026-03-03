@@ -1,0 +1,13 @@
+[project]
+name = "wb-parser"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-settings>=2.13.1",
+    "pydantic (>=2.12.5,<3.0.0)",
+    "bs4>=0.0.2",
+    "httpx>=0.28.1",
+    "pandas>=3.0.1",
+    "openpyxl>=3.1.5",
+]
