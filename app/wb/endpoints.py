@@ -4,7 +4,9 @@ from urllib.parse import urlencode
 
 @dataclass(frozen=True)
 class WBEndpoints:
-    search_base: str = "https://www.wildberries.ru/__internal/u-search/exactmatch/ru/common/v18/search"
+    search_base: str = (
+        "https://www.wildberries.ru/__internal/u-search/exactmatch/ru/common/v18/search"
+    )
     detail_base: str = "https://card.wb.ru/cards/v1/detail"
 
     def search_url(
@@ -39,8 +41,16 @@ class WBEndpoints:
         }
         return f"{self.search_base}?{urlencode(params)}"
 
-    def detail_url(self, *, nm_id: int, dest: int, curr: str, app_type: int, spp: int = 30) -> str:
-        params = {"appType": app_type, "curr": curr, "dest": dest, "spp": spp, "nm": nm_id}
+    def detail_url(
+        self, *, nm_id: int, dest: int, curr: str, app_type: int, spp: int = 30
+    ) -> str:
+        params = {
+            "appType": app_type,
+            "curr": curr,
+            "dest": dest,
+            "spp": spp,
+            "nm": nm_id,
+        }
         return f"{self.detail_base}?{urlencode(params)}"
 
     def card_url(
@@ -52,7 +62,9 @@ class WBEndpoints:
     ) -> str:
         vol = nm_id // 100_000
         part = nm_id // 1_000
-        return f"https://{basket_host}/vol{vol}/part{part}/{nm_id}/info/{lang}/card.json"
+        return (
+            f"https://{basket_host}/vol{vol}/part{part}/{nm_id}/info/{lang}/card.json"
+        )
 
     @staticmethod
     def basket_path(nm_id: int, lang: str) -> str:
@@ -62,4 +74,6 @@ class WBEndpoints:
 
     @staticmethod
     def basket_url(host: int, nm_id: int, lang: str) -> str:
-        return f"https://basket-{host:02d}.wbbasket.ru" + WBEndpoints.basket_path(nm_id, lang)
+        return f"https://basket-{host:02d}.wbbasket.ru" + WBEndpoints.basket_path(
+            nm_id, lang
+        )

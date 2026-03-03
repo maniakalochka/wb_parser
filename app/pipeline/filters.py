@@ -1,5 +1,6 @@
 from app.models import CatalogRow
 
+
 def is_filtered(row: CatalogRow) -> bool:
     if row.rating is None or row.rating < 4.5:
         return False

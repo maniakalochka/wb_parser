@@ -1,5 +1,6 @@
 import asyncio
 import logging
+
 import typer
 
 from app.config import Config
@@ -18,8 +19,12 @@ def run(
     concurrency: int = typer.Option(6, help="Параллелизм запросов."),
     out_dir: str = typer.Option("artifacts", help="Папка для XLSX."),
     save_raw_json: bool = typer.Option(False, help="Сохранять сырые ответы JSON."),
-    basket_host: str = typer.Option("basket-16.wbbasket.ru", help="CDN host для картинок и card.json."),
-    image_size: str = typer.Option("c246x328", help="Размер картинок (c246x328, c516x688 и т.п.)."),
+    basket_host: str = typer.Option(
+        "basket-16.wbbasket.ru", help="CDN host для картинок и card.json."
+    ),
+    image_size: str = typer.Option(
+        "c246x328", help="Размер картинок (c246x328, c516x688 и т.п.)."
+    ),
 ):
     setup_logging(logging.INFO)
 

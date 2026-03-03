@@ -8,24 +8,18 @@ from tqdm.asyncio import tqdm_asyncio
 from app.config import Config
 from app.export import export_rows
 from app.http import HttpClient
-from app.wb.endpoints import WBEndpoints
-from app.wb.parsers import (
-    parse_search_products,
-    parse_detail_product,
-    extract_sizes_str,
-    extract_rating,
-    extract_reviews_count,
-    extract_seller,
-    extract_pics,
-    extract_description,
-    extract_options_struct,
-    options_to_json,
-    extract_country_from_options,
-    extract_price_rub_from_search, extract_sizes_str_from_card, extract_price_rub_from_detail,
-    extract_stock_total_from_detail, extract_stock_total_from_search
-)
-from app.pipeline.merge import merge_to_row
 from app.pipeline.filters import is_filtered
+from app.pipeline.merge import merge_to_row
+from app.wb.endpoints import WBEndpoints
+from app.wb.parsers import (extract_country_from_options, extract_description,
+                            extract_options_struct, extract_pics,
+                            extract_price_rub_from_detail,
+                            extract_price_rub_from_search, extract_rating,
+                            extract_reviews_count, extract_seller,
+                            extract_sizes_str, extract_sizes_str_from_card,
+                            extract_stock_total_from_detail,
+                            extract_stock_total_from_search, options_to_json,
+                            parse_detail_product, parse_search_products)
 
 log = logging.getLogger("wb.pipeline")
 
@@ -40,7 +34,9 @@ def _save_raw(out_dir: str, name: str, data: dict) -> None:
 
 
 async def run_pipeline(cfg: Config) -> tuple[str, str]:
-    http = HttpClient(timeout_s=cfg.timeout_s, retries=cfg.retries, concurrency=cfg.concurrency)
+    http = HttpClient(
+        timeout_s=cfg.timeout_s, retries=cfg.retries, concurrency=cfg.concurrency
+    )
     endpoints = WBEndpoints()
 
     try:
@@ -81,7 +77,9 @@ async def run_pipeline(cfg: Config) -> tuple[str, str]:
         log.info("collected nm_ids=%d", len(nm_ids))
 
         async def fetch_detail(nm_id: int) -> dict | None:
-            url = endpoints.detail_url(nm_id=nm_id, dest=cfg.dest, curr=cfg.curr, app_type=cfg.app_type)
+            url = endpoints.detail_url(
+                nm_id=nm_id, dest=cfg.dest, curr=cfg.curr, app_type=cfg.app_type
+            )
 
             headers = {}
             if cfg.wb_cookie:
@@ -102,7 +100,10 @@ async def run_pipeline(cfg: Config) -> tuple[str, str]:
             return parse_detail_product(payload)
 
         async def fetch_card(nm_id: int) -> tuple[dict, str] | None:
-            headers = {"Origin": "https://www.wildberries.ru", "Referer": "https://www.wildberries.ru/"}
+            headers = {
+                "Origin": "https://www.wildberries.ru",
+                "Referer": "https://www.wildberries.ru/",
+            }
 
             cached = card_host_cache.get(nm_id)
             if cached:
@@ -150,30 +151,21 @@ async def run_pipeline(cfg: Config) -> tuple[str, str]:
             detail_p = detail_map.get(nm, {})
             card_p = card_map.get(nm, {})
             sizes = (
-                    extract_sizes_str(detail_p)
-                    or extract_sizes_str_from_card(card_p)
-                    or ""
+                extract_sizes_str(detail_p) or extract_sizes_str_from_card(card_p) or ""
             )
 
-            price = (
-                    extract_price_rub_from_detail(detail_p)
-                    or extract_price_rub_from_search(search_p)
-            )
+            price = extract_price_rub_from_detail(
+                detail_p
+            ) or extract_price_rub_from_search(search_p)
 
             stock_total = (
-                    extract_stock_total_from_detail(detail_p)
-                    or extract_stock_total_from_search(search_p)
-                    or 0
+                extract_stock_total_from_detail(detail_p)
+                or extract_stock_total_from_search(search_p)
+                or 0
             )
-            rating = (
-                    extract_rating(search_p)
-                    or extract_rating(detail_p)
-            )
+            rating = extract_rating(search_p) or extract_rating(detail_p)
 
-            reviews = (
-                    extract_reviews_count(search_p)
-                    or extract_reviews_count(detail_p)
-            )
+            reviews = extract_reviews_count(search_p) or extract_reviews_count(detail_p)
 
             seller_name, seller_url = extract_seller(search_p)
             if seller_name is None:
@@ -182,9 +174,9 @@ async def run_pipeline(cfg: Config) -> tuple[str, str]:
             pics = extract_pics(detail_p) or extract_pics(search_p) or 0
 
             description = (
-                    extract_description(card_p)
-                    or detail_p.get("description")
-                    or search_p.get("description")
+                extract_description(card_p)
+                or detail_p.get("description")
+                or search_p.get("description")
             )
 
             options = extract_options_struct(card_p)

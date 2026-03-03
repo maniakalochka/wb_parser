@@ -55,7 +55,6 @@ def extract_price_rub(detail_product: dict) -> int | None:
     return (min(prices) // 100) if prices else None
 
 
-
 def extract_seller(product: dict) -> tuple[str | None, str | None]:
     name = product.get("supplier")
     seller_id = product.get("supplierId")
@@ -120,6 +119,7 @@ def extract_reviews_count(p: dict) -> int | None:
             return v
     return None
 
+
 def extract_sizes_str_from_card(card_p: dict) -> str | None:
     sizes_table = card_p.get("sizes_table")
     if not isinstance(sizes_table, dict):
@@ -141,6 +141,7 @@ def extract_sizes_str_from_card(card_p: dict) -> str | None:
 
     return ", ".join(dict.fromkeys(sizes))
 
+
 def extract_price_rub_from_detail(p: dict) -> int | None:
     sizes = p.get("sizes")
     if isinstance(sizes, list):
@@ -159,6 +160,7 @@ def extract_price_rub_from_detail(p: dict) -> int | None:
             return v // 100
 
     return None
+
 
 def extract_stock_total_from_detail(p: dict) -> int:
     tq = p.get("totalQuantity")
@@ -184,6 +186,7 @@ def extract_stock_total_from_detail(p: dict) -> int:
                 total += qty
 
     return total
+
 
 def extract_price_rub_from_search(p: dict) -> int | None:
     for key in ("salePriceU", "priceU", "salePrice", "price"):
@@ -215,6 +218,7 @@ def extract_price_rub_from_search(p: dict) -> int | None:
             return min(candidates) // 100
 
     return None
+
 
 def extract_stock_total_from_search(p: dict) -> int:
     tq = p.get("totalQuantity")
